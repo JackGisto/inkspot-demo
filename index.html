@@ -1,0 +1,1690 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="InkSpot: cerca l'idea per il tuo tatuaggio, scopri chi la realizza vicino a te, provala sulla tua pelle e prenota la seduta.">
+<meta name="theme-color" content="#0C0A0D">
+<meta property="og:title" content="InkSpot">
+<meta property="og:description" content="Cerca l'idea, trova lo studio, provala sulla pelle, prenota la seduta.">
+<meta property="og:type" content="website">
+<style>
+  html { color-scheme: dark; }
+  body { margin: 0; font: 14px/1.4 system-ui, sans-serif; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+<title>InkSpot</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=Archivo:wght@400;500;600;700&family=Barlow+Condensed:wght@500;600;700&display=swap">
+<style>
+  :root {
+    --inchiostro: #0C0A0D;
+    --superficie: #171319;
+    --superficie-alta: #211B24;
+    --bordo: #342B38;
+    --carta: #EDE3D2;
+    --carta-ombra: #D6C8B2;
+    --testo: #F4EFE7;
+    --testo-soft: #A79BA5;
+    --testo-debole: #7A6E79;
+    --mattone: #C1372C;
+    --ocra: #D9A441;
+    --oliva: #6E8055;
+    --pelle: #C79B79;
+
+    --display: 'Rye', 'Georgia', serif;
+    --corpo: 'Archivo', 'Helvetica Neue', system-ui, sans-serif;
+    --etichetta: 'Barlow Condensed', 'Arial Narrow', sans-serif;
+
+    --r-sm: 6px;
+    --r-md: 12px;
+    --r-lg: 20px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background: #08070A;
+    color: var(--testo);
+    font-family: var(--corpo);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  button { font: inherit; color: inherit; background: none; border: none; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--ocra); outline-offset: 2px; }
+
+  /* ---------- impalcatura ---------- */
+
+  .scena {
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding-block: 0;
+  }
+
+  .telefono {
+    width: 100%;
+    max-width: 440px;
+    background: var(--inchiostro);
+    display: flex;
+    flex-direction: column;
+    height: 100dvh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .nota-demo { display: none; }
+
+  @media (min-width: 900px) {
+    .scena {
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: 56px;
+      padding: 40px 24px;
+    }
+    .telefono {
+      height: min(860px, calc(100dvh - 80px));
+      border-radius: 34px;
+      border: 1px solid var(--bordo);
+      box-shadow: 0 40px 90px rgba(0,0,0,.6);
+    }
+    .nota-demo {
+      display: block;
+      max-width: 380px;
+      color: var(--testo-soft);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .nota-demo h1 {
+      font-family: var(--display);
+      font-size: 40px;
+      color: var(--carta);
+      margin: 0 0 6px;
+      letter-spacing: .5px;
+    }
+    .nota-demo .occhiello {
+      font-family: var(--etichetta);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--ocra);
+      font-size: 13px;
+    }
+    .nota-demo ul { padding-left: 18px; margin: 14px 0 0; }
+    .nota-demo li { margin-bottom: 6px; }
+  }
+
+  /* ---------- barre ---------- */
+
+  .barra-alta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px 10px;
+    border-bottom: 1px solid var(--bordo);
+    flex: 0 0 auto;
+  }
+  .marchio {
+    font-family: var(--display);
+    font-size: 22px;
+    letter-spacing: .5px;
+    color: var(--carta);
+  }
+  .marchio span { color: var(--mattone); }
+  .titolo-schermata {
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 2.4px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--testo-soft);
+  }
+  .barra-alta .spinta { margin-left: auto; }
+
+  .indietro {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 1.6px;
+    font-size: 14px;
+    color: var(--testo-soft);
+  }
+
+  #schermo {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .tabbar {
+    flex: 0 0 auto;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    border-top: 1px solid var(--bordo);
+    background: var(--inchiostro);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .tabbar button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    padding: 9px 0 11px;
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    font-size: 11px;
+    color: var(--testo-debole);
+  }
+  .tabbar button[aria-current="page"] { color: var(--ocra); }
+  .tabbar svg { width: 21px; height: 21px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+
+  /* ---------- elementi comuni ---------- */
+
+  .sezione { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  .etichetta {
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 1.8px;
+    font-size: 13px;
+    color: var(--testo-debole);
+  }
+
+  .strisciaChip {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    padding: 0 16px 2px;
+    scrollbar-width: none;
+  }
+  .strisciaChip::-webkit-scrollbar { display: none; }
+
+  .chip {
+    flex: 0 0 auto;
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    font-size: 13px;
+    padding: 7px 13px;
+    border: 1px solid var(--bordo);
+    border-radius: 999px;
+    color: var(--testo-soft);
+    white-space: nowrap;
+  }
+  .chip[aria-pressed="true"] {
+    background: var(--mattone);
+    border-color: var(--mattone);
+    color: #fff;
+  }
+  .chip.carta[aria-pressed="true"] { background: var(--ocra); border-color: var(--ocra); color: #221A0A; }
+
+  .pulsante {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 13px 18px;
+    border-radius: 999px;
+    background: var(--mattone);
+    color: #fff;
+    font-weight: 600;
+    font-size: 15px;
+    letter-spacing: .2px;
+  }
+  .pulsante.secondario {
+    background: var(--superficie-alta);
+    border: 1px solid var(--bordo);
+    color: var(--testo);
+  }
+  .pulsante[disabled] { opacity: .38; cursor: not-allowed; }
+  .pulsante svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; }
+
+  .riga-pulsanti { display: flex; gap: 8px; }
+  .riga-pulsanti > * { flex: 1; }
+
+  /* ---------- il flash: disegno su carta ---------- */
+
+  .flash {
+    background: var(--carta);
+    border-radius: var(--r-sm);
+    position: relative;
+    overflow: hidden;
+    aspect-ratio: 4 / 5;
+    display: block;
+    width: 100%;
+  }
+  .flash svg { width: 100%; height: 100%; display: block; }
+  .flash::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(120% 90% at 30% 10%, rgba(255,255,255,.5), rgba(0,0,0,.12) 90%);
+    pointer-events: none;
+  }
+
+  .bollino {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 2;
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-size: 11px;
+    padding: 3px 8px;
+    border-radius: 3px;
+    background: var(--mattone);
+    color: #fff;
+  }
+  .bollino.eseguito { background: #2B2430; color: var(--carta); }
+
+  /* ---------- feed ---------- */
+
+  .post { border-bottom: 1px solid var(--bordo); padding-bottom: 14px; }
+  .post + .post { margin-top: 14px; }
+
+  .testata-post {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 16px;
+  }
+  .ritratto {
+    width: 38px; height: 38px;
+    border-radius: 999px;
+    flex: 0 0 auto;
+    background: var(--superficie-alta);
+    display: grid; place-items: center;
+    font-family: var(--display);
+    font-size: 15px;
+    color: var(--ocra);
+    border: 1px solid var(--bordo);
+  }
+  .nome-artista { font-weight: 600; font-size: 14px; }
+  .luogo-post { font-size: 12px; color: var(--testo-soft); }
+  .post .flash { border-radius: 0; }
+
+  .azioni-post {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 12px 16px 6px;
+  }
+  .azioni-post svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.7; }
+  .azioni-post button { color: var(--testo); display: flex; }
+  .azioni-post button.attivo { color: var(--mattone); }
+  .azioni-post button.attivo svg { fill: currentColor; }
+  .azioni-post .spinta { margin-left: auto; }
+
+  .corpo-post { padding: 0 16px; display: flex; flex-direction: column; gap: 4px; }
+  .corpo-post .conteggio { font-size: 13px; font-weight: 600; }
+  .corpo-post .testo { font-size: 14px; line-height: 1.45; color: var(--testo); }
+  .corpo-post .testo b { font-weight: 700; }
+  .corpo-post .meta {
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-size: 12px;
+    color: var(--testo-debole);
+  }
+
+  /* ---------- griglia ---------- */
+
+  .griglia {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 0 16px 20px;
+  }
+  .cella { display: flex; flex-direction: column; gap: 5px; text-align: left; }
+  .cella .titolo { font-size: 13px; font-weight: 600; }
+  .cella .sotto { font-size: 11px; color: var(--testo-soft); }
+  .cella .prezzo {
+    font-family: var(--etichetta);
+    font-size: 14px;
+    letter-spacing: 1px;
+    color: var(--ocra);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .barra-ricerca {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 16px;
+    padding: 0 14px;
+    height: 44px;
+    border: 1px solid var(--bordo);
+    border-radius: 999px;
+    background: var(--superficie);
+  }
+  .barra-ricerca input {
+    flex: 1;
+    background: none;
+    border: none;
+    color: var(--testo);
+    font-size: 15px;
+    min-width: 0;
+  }
+  .barra-ricerca input:focus { outline: none; }
+  .barra-ricerca svg { width: 18px; height: 18px; stroke: var(--testo-debole); fill: none; stroke-width: 1.8; }
+
+  .conteggio-risultati {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0 16px;
+  }
+  .conteggio-risultati .numero {
+    font-family: var(--etichetta);
+    font-size: 15px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--testo-soft);
+  }
+  .link { color: var(--ocra); font-size: 13px; font-weight: 600; }
+
+  /* ---------- mappa ---------- */
+
+  .mappa-guscio { position: relative; }
+  .mappa { width: 100%; display: block; background: #14161A; }
+  .marcatore { cursor: pointer; }
+  .marcatore text {
+    font-family: var(--etichetta);
+    font-size: 11px;
+    letter-spacing: 1px;
+    fill: var(--carta);
+  }
+  .nota-mappa {
+    position: absolute;
+    left: 12px; right: 12px; top: 12px;
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-size: 11px;
+    color: var(--testo-soft);
+    background: rgba(12,10,13,.82);
+    border: 1px solid var(--bordo);
+    border-radius: 4px;
+    padding: 6px 10px;
+  }
+
+  .scheda-luogo {
+    display: flex;
+    gap: 12px;
+    margin: 12px 16px 0;
+    padding: 12px;
+    border: 1px solid var(--bordo);
+    border-radius: var(--r-md);
+    background: var(--superficie);
+    text-align: left;
+    width: calc(100% - 32px);
+  }
+  .scheda-luogo .flash { width: 66px; flex: 0 0 66px; aspect-ratio: 3/4; }
+  .scheda-luogo .nome { font-weight: 600; font-size: 15px; }
+  .scheda-luogo .via { font-size: 12px; color: var(--testo-soft); }
+  .scheda-luogo .stelle { font-family: var(--etichetta); font-size: 13px; letter-spacing: 1px; color: var(--ocra); }
+
+  /* ---------- dettaglio ---------- */
+
+  .dettaglio-testa { padding: 0 0 4px; }
+  .titolo-opera {
+    font-family: var(--display);
+    font-size: 26px;
+    line-height: 1.15;
+    color: var(--carta);
+    text-wrap: balance;
+  }
+  .scheda-dati {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    border: 1px solid var(--bordo);
+    border-radius: var(--r-md);
+    overflow: hidden;
+  }
+  .scheda-dati div { padding: 11px 10px; border-right: 1px solid var(--bordo); }
+  .scheda-dati div:last-child { border-right: none; }
+  .scheda-dati dt {
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-size: 11px;
+    color: var(--testo-debole);
+    margin: 0;
+  }
+  .scheda-dati dd {
+    margin: 2px 0 0;
+    font-size: 15px;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .riga-artista {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border: 1px solid var(--bordo);
+    border-radius: var(--r-md);
+    background: var(--superficie);
+    width: 100%;
+    text-align: left;
+  }
+  .riga-artista .ritratto { width: 46px; height: 46px; font-size: 17px; }
+
+  .paragrafo { font-size: 14px; line-height: 1.55; color: var(--testo-soft); }
+
+  /* ---------- prova sulla pelle ---------- */
+
+  .studio-prova { display: flex; flex-direction: column; gap: 12px; padding: 14px 16px 20px; }
+  .tela {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border-radius: var(--r-md);
+    overflow: hidden;
+    background: var(--superficie);
+    touch-action: none;
+    isolation: isolate;
+  }
+  .tela img.sfondo, .tela canvas.sfondo {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+  #stencilMobile {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 52%;
+    aspect-ratio: 1;
+    cursor: grab;
+    will-change: transform;
+  }
+  #stencilMobile svg { width: 100%; height: 100%; display: block; }
+  .fonde { mix-blend-mode: multiply; }
+
+  .comandi { display: grid; grid-template-columns: auto 1fr; gap: 10px 12px; align-items: center; }
+  .comandi label {
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 1.4px;
+    font-size: 12px;
+    color: var(--testo-debole);
+  }
+  input[type="range"] { width: 100%; accent-color: var(--mattone); }
+
+  .interruttore {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    font-size: 14px;
+    color: var(--testo-soft);
+  }
+  input[type="checkbox"] { accent-color: var(--ocra); width: 18px; height: 18px; }
+
+  .suggerimento { font-size: 12px; color: var(--testo-debole); line-height: 1.5; }
+
+  .sorgente-foto {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .sorgente-foto .pulsante { flex: 1 1 46%; font-size: 14px; padding: 11px 12px; }
+  input[type="file"] { display: none; }
+
+  /* ---------- moduli ---------- */
+
+  .campo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .campo input[type="text"], .campo input[type="number"], .campo textarea {
+    background: var(--superficie);
+    border: 1px solid var(--bordo);
+    border-radius: var(--r-sm);
+    color: var(--testo);
+    padding: 11px 12px;
+    font-family: var(--corpo);
+    font-size: 15px;
+    width: 100%;
+  }
+  .campo textarea { min-height: 86px; resize: vertical; }
+
+  .prenotazione {
+    border: 1px solid var(--bordo);
+    border-radius: var(--r-md);
+    background: var(--superficie);
+    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .prenotazione .riga { display: flex; gap: 12px; }
+  .prenotazione .flash { width: 62px; flex: 0 0 62px; aspect-ratio: 3/4; }
+  .prenotazione img.anteprima {
+    width: 62px; flex: 0 0 62px;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: var(--r-sm);
+  }
+  .stato {
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-size: 12px;
+  }
+  .stato.richiesta { color: var(--ocra); }
+  .stato.confermata { color: var(--oliva); }
+
+  .vuoto {
+    text-align: center;
+    color: var(--testo-debole);
+    font-size: 14px;
+    padding: 48px 24px;
+    line-height: 1.6;
+  }
+
+  /* ---------- pannello studio ---------- */
+
+  .metriche {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .metrica {
+    border: 1px solid var(--bordo);
+    border-radius: var(--r-sm);
+    padding: 10px 6px;
+    text-align: center;
+  }
+  .metrica .valore {
+    font-family: var(--etichetta);
+    font-size: 22px;
+    font-variant-numeric: tabular-nums;
+    color: var(--carta);
+  }
+  .metrica .voce {
+    font-family: var(--etichetta);
+    text-transform: uppercase;
+    letter-spacing: 1.1px;
+    font-size: 10px;
+    color: var(--testo-debole);
+  }
+
+  .avviso {
+    border-left: 3px solid var(--ocra);
+    background: var(--superficie);
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.5;
+    color: var(--testo-soft);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .post, .griglia, .sezione { animation: entra .28s ease-out both; }
+    @keyframes entra { from { opacity: .4; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+  }
+</style>
+</head>
+<body>
+<div class="scena">
+  <div class="telefono">
+    <div class="barra-alta" id="barraAlta"></div>
+    <main id="schermo"></main>
+    <nav class="tabbar" id="tabbar" aria-label="Sezioni principali"></nav>
+  </div>
+
+  <aside class="nota-demo">
+    <p class="occhiello">Prototipo · dati di esempio</p>
+    <h1>InkSpot</h1>
+    <p>Il punto d'incontro fra chi cerca un tatuaggio e chi lo fa. Cerca un'idea, scopri chi la realizza vicino a te, provala sulla tua pelle e prenota la seduta.</p>
+    <ul>
+      <li>I disegni sono illustrazioni originali di questa demo, non lavori reali.</li>
+      <li>La mappa è schematica: nell'app su telefono sono le mappe di sistema con gli indirizzi veri.</li>
+      <li>La prova sulla pelle apre la fotocamera del telefono e sovrappone il disegno alla foto.</li>
+      <li>Niente si salva: ricaricando la pagina tutto torna come all'inizio.</li>
+    </ul>
+  </aside>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  /* ============================================================
+     Disegni. Ogni tatuaggio è un SVG originale in stile flash:
+     linea nera su carta, con i colori del tradizionale.
+     ============================================================ */
+
+  const NERO = '#141014';
+  const T = (d, extra) => `<path d="${d}" fill="none" stroke="${NERO}" stroke-width="${(extra && extra.w) || 3}" stroke-linecap="round" stroke-linejoin="round"/>`;
+
+  function ripeti(n, fn) {
+    let out = '';
+    for (let i = 0; i < n; i++) out += fn(i);
+    return out;
+  }
+
+  const DISEGNI = {
+    serpente() {
+      let corpo = 'M100 22 C 58 48, 142 78, 100 104 C 58 130, 142 160, 100 184';
+      let rombi = ripeti(7, (i) => {
+        const t = i / 6;
+        const y = 40 + t * 130;
+        const x = 100 + Math.sin(t * Math.PI * 2.4) * 34;
+        const r = 13 - i * 0.6;
+        return `<path d="M${x} ${y - r} L${x + r} ${y} L${x} ${y + r} L${x - r} ${y} Z" fill="${i % 2 ? NERO : 'none'}" stroke="${NERO}" stroke-width="2.4"/>`;
+      });
+      return T(corpo, { w: 3.4 }) + rombi +
+        `<circle cx="94" cy="26" r="3" fill="${NERO}"/><path d="M100 18 l10 -9 M100 18 l-9 -10" stroke="${NERO}" stroke-width="2.6" stroke-linecap="round" fill="none"/>`;
+    },
+
+    mandala() {
+      let out = `<circle cx="100" cy="100" r="16" fill="none" stroke="${NERO}" stroke-width="3"/>`;
+      out += ripeti(12, (i) => {
+        const a = (i / 12) * Math.PI * 2;
+        const x1 = 100 + Math.cos(a) * 26, y1 = 100 + Math.sin(a) * 26;
+        const x2 = 100 + Math.cos(a) * 58, y2 = 100 + Math.sin(a) * 58;
+        return `<path d="M${x1} ${y1} L${x2} ${y2}" stroke="${NERO}" stroke-width="2.2"/>` +
+          `<circle cx="${x2}" cy="${y2}" r="5.5" fill="none" stroke="${NERO}" stroke-width="2.2"/>`;
+      });
+      out += `<circle cx="100" cy="100" r="70" fill="none" stroke="${NERO}" stroke-width="2.4"/>`;
+      out += ripeti(36, (i) => {
+        const a = (i / 36) * Math.PI * 2;
+        return `<circle cx="${100 + Math.cos(a) * 80}" cy="${100 + Math.sin(a) * 80}" r="${i % 3 ? 2 : 3.4}" fill="${NERO}"/>`;
+      });
+      out += ripeti(18, (i) => {
+        const a = (i / 18) * Math.PI * 2 + 0.17;
+        return `<circle cx="${100 + Math.cos(a) * 90}" cy="${100 + Math.sin(a) * 90}" r="1.7" fill="${NERO}"/>`;
+      });
+      return out;
+    },
+
+    farfalla() {
+      const ala = (s) => `<path d="M100 100 C ${100 + 52 * s} 44, ${100 + 76 * s} 62, ${100 + 60 * s} 96 C ${100 + 78 * s} 106, ${100 + 56 * s} 150, 100 112" fill="none" stroke="${NERO}" stroke-width="2.4" stroke-linejoin="round"/>` +
+        `<path d="M${100 + 24 * s} 78 C ${100 + 44 * s} 70, ${100 + 56 * s} 78, ${100 + 52 * s} 90" fill="none" stroke="${NERO}" stroke-width="1.6"/>` +
+        `<circle cx="${100 + 44 * s}" cy="112" r="3" fill="${NERO}"/>`;
+      return ala(1) + ala(-1) +
+        `<path d="M100 82 L100 128" stroke="${NERO}" stroke-width="3" stroke-linecap="round"/>` +
+        `<path d="M100 80 C 96 66, 90 60, 84 56 M100 80 C 104 66, 110 60, 116 56" fill="none" stroke="${NERO}" stroke-width="2" stroke-linecap="round"/>`;
+    },
+
+    rondine() {
+      return `<path d="M62 96 C 84 70, 126 70, 150 92 C 130 96, 112 106, 100 120 C 88 106, 76 100, 62 96 Z" fill="${'#C1372C'}" stroke="${NERO}" stroke-width="3" stroke-linejoin="round"/>` +
+        `<path d="M100 120 C 92 136, 74 146, 56 148 C 68 136, 74 126, 78 112" fill="${'#D9A441'}" stroke="${NERO}" stroke-width="3" stroke-linejoin="round"/>` +
+        `<path d="M100 120 C 108 136, 126 146, 144 148 C 132 136, 126 126, 122 112" fill="${'#D9A441'}" stroke="${NERO}" stroke-width="3" stroke-linejoin="round"/>` +
+        `<path d="M150 92 C 160 86, 168 84, 176 86 C 168 92, 162 98, 158 104" fill="${'#6E8055'}" stroke="${NERO}" stroke-width="2.6" stroke-linejoin="round"/>` +
+        `<circle cx="146" cy="90" r="3" fill="${NERO}"/>`;
+    },
+
+    tigre() {
+      return `<path d="M100 44 C 142 44, 160 76, 156 110 C 152 148, 128 168, 100 168 C 72 168, 48 148, 44 110 C 40 76, 58 44, 100 44 Z" fill="${'#D9A441'}" stroke="${NERO}" stroke-width="3.4"/>` +
+        `<path d="M74 96 C 82 88, 94 88, 100 94 M126 96 C 118 88, 106 88, 100 94" fill="none" stroke="${NERO}" stroke-width="3"/>` +
+        `<circle cx="80" cy="102" r="5" fill="${NERO}"/><circle cx="120" cy="102" r="5" fill="${NERO}"/>` +
+        `<path d="M100 118 l-10 10 h20 z" fill="${'#C1372C'}" stroke="${NERO}" stroke-width="2.4" stroke-linejoin="round"/>` +
+        `<path d="M100 128 L100 140 M100 140 C 92 148, 80 146, 76 138 M100 140 C 108 148, 120 146, 124 138" fill="none" stroke="${NERO}" stroke-width="2.8" stroke-linecap="round"/>` +
+        ripeti(4, (i) => `<path d="M${58 + i * 6} ${68 + i * 14} q 10 -6 18 -2" fill="none" stroke="${NERO}" stroke-width="4" stroke-linecap="round"/>` +
+          `<path d="M${142 - i * 6} ${68 + i * 14} q -10 -6 -18 -2" fill="none" stroke="${NERO}" stroke-width="4" stroke-linecap="round"/>`);
+    },
+
+    drago() {
+      let out = T('M46 158 C 40 116, 72 96, 104 104 C 136 112, 150 96, 142 74 C 136 56, 114 52, 104 66', { w: 4 });
+      out += ripeti(9, (i) => {
+        const t = i / 8;
+        const x = 50 + t * 78, y = 154 - Math.sin(t * 2.2) * 54;
+        return `<path d="M${x} ${y} l6 -9 l6 9" fill="none" stroke="${NERO}" stroke-width="2.4" stroke-linecap="round"/>`;
+      });
+      out += `<path d="M104 66 C 94 54, 96 38, 112 34 C 128 30, 142 42, 136 56" fill="${'#C1372C'}" stroke="${NERO}" stroke-width="3" stroke-linejoin="round"/>`;
+      out += `<circle cx="118" cy="46" r="3.4" fill="${NERO}"/>`;
+      out += `<path d="M112 34 C 108 22, 118 16, 126 18 M136 56 c 10 -4 16 -14 14 -24" fill="none" stroke="${NERO}" stroke-width="2.4" stroke-linecap="round"/>`;
+      out += `<path d="M60 150 c -12 6 -22 4 -28 -4 c 10 0 16 -4 20 -10" fill="${'#6E8055'}" stroke="${NERO}" stroke-width="2.6" stroke-linejoin="round"/>`;
+      return out;
+    },
+
+    teschio() {
+      return `<path d="M100 34 C 140 34, 160 62, 158 96 C 157 116, 146 128, 138 134 L138 154 C 138 162, 130 166, 120 166 L80 166 C 70 166, 62 162, 62 154 L62 134 C 54 128, 43 116, 42 96 C 40 62, 60 34, 100 34 Z" fill="${NERO}"/>` +
+        `<ellipse cx="76" cy="96" rx="16" ry="19" fill="${'#EDE3D2'}"/><ellipse cx="124" cy="96" rx="16" ry="19" fill="${'#EDE3D2'}"/>` +
+        `<path d="M100 116 l-9 16 h18 z" fill="${'#EDE3D2'}"/>` +
+        `<path d="M78 150 v14 M92 150 v16 M108 150 v16 M122 150 v14" stroke="${'#EDE3D2'}" stroke-width="3" stroke-linecap="round"/>` +
+        `<path d="M62 146 h76" stroke="${'#EDE3D2'}" stroke-width="3"/>`;
+    },
+
+    ramo() {
+      let out = T('M100 178 C 98 140, 100 96, 104 44', { w: 2.6 });
+      out += ripeti(7, (i) => {
+        const y = 158 - i * 18;
+        const s = i % 2 ? 1 : -1;
+        const x = 100 + (i % 2 ? 1 : -1) * 1;
+        return `<path d="M${x} ${y} C ${x + 18 * s} ${y - 4}, ${x + 26 * s} ${y - 14}, ${x + 22 * s} ${y - 22} C ${x + 12 * s} ${y - 18}, ${x + 4 * s} ${y - 10}, ${x} ${y} Z" fill="none" stroke="${NERO}" stroke-width="2.2" stroke-linejoin="round"/>`;
+      });
+      out += `<circle cx="104" cy="42" r="4" fill="${NERO}"/>`;
+      return out;
+    },
+
+    lettering() {
+      return `<text x="100" y="106" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="44" fill="${NERO}">Semper</text>` +
+        `<text x="100" y="140" text-anchor="middle" font-family="Georgia, serif" font-style="italic" font-size="24" fill="${NERO}">fidelis</text>` +
+        `<path d="M44 120 h112" stroke="${NERO}" stroke-width="1.6"/>`;
+    },
+
+    onda() {
+      let out = `<path d="M30 130 C 52 96, 88 96, 108 120 C 124 140, 150 140, 168 120" fill="none" stroke="${NERO}" stroke-width="4" stroke-linecap="round"/>`;
+      out += `<path d="M36 148 C 60 120, 92 120, 112 142" fill="none" stroke="${NERO}" stroke-width="2.4" stroke-linecap="round"/>`;
+      out += `<path d="M108 120 C 104 96, 116 74, 138 68 C 130 84, 132 100, 142 110" fill="rgba(110,128,85,.45)" stroke="${NERO}" stroke-width="2.6" stroke-linejoin="round"/>`;
+      out += `<circle cx="70" cy="112" r="7" fill="rgba(193,55,44,.4)"/>`;
+      out += `<circle cx="92" cy="102" r="4.5" fill="rgba(217,164,65,.5)"/>`;
+      out += `<circle cx="126" cy="132" r="5.5" fill="rgba(193,55,44,.3)"/>`;
+      return out;
+    },
+
+    geometria() {
+      let out = `<circle cx="100" cy="100" r="56" fill="none" stroke="${NERO}" stroke-width="2.6"/>`;
+      out += ripeti(6, (i) => {
+        const a = (i / 6) * Math.PI * 2;
+        return `<circle cx="${100 + Math.cos(a) * 28}" cy="${100 + Math.sin(a) * 28}" r="28" fill="none" stroke="${NERO}" stroke-width="1.8"/>`;
+      });
+      out += `<path d="M100 40 L152 130 L48 130 Z" fill="none" stroke="${NERO}" stroke-width="3" stroke-linejoin="round"/>`;
+      out += `<path d="M100 160 L48 70 L152 70 Z" fill="none" stroke="${NERO}" stroke-width="1.6" stroke-linejoin="round"/>`;
+      return out;
+    },
+
+    profilo() {
+      return T('M132 26 C 92 30, 66 60, 66 98 C 66 116, 58 124, 52 132 C 48 138, 52 144, 62 144 C 62 158, 66 172, 78 178', { w: 3 }) +
+        T('M78 178 C 96 178, 112 168, 118 152', { w: 3 }) +
+        `<circle cx="88" cy="98" r="4" fill="${NERO}"/>` +
+        T('M66 112 C 74 116, 80 116, 84 112', { w: 2 }) +
+        T('M74 136 C 82 142, 92 142, 100 136', { w: 2.4 }) +
+        ripeti(5, (i) => `<path d="M${128 - i * 4} ${28 + i * 9} C ${152 - i * 3} ${34 + i * 9}, ${156 - i * 3} ${56 + i * 10}, ${142 - i * 4} ${74 + i * 10}" fill="none" stroke="${NERO}" stroke-width="2" stroke-linecap="round"/>`);
+    },
+  };
+
+  const svgDi = (chiave) => `<svg viewBox="0 0 200 200" role="img" aria-label="disegno del tatuaggio" xmlns="http://www.w3.org/2000/svg">${DISEGNI[chiave]()}</svg>`;
+
+  /* ============================================================
+     Dati dimostrativi
+     ============================================================ */
+
+  const studi = [
+    { id: 's-1', nome: 'Nero Inchiostro', via: 'Via Tortona 31', citta: 'Milano', lat: 45.4508, lon: 9.1653, voto: 4.8, recensioni: 214, orari: 'Lun-Sab 11-20', bio: 'Studio storico in zona Tortona. Cinque artisti residenti, guest internazionali ogni mese.' },
+    { id: 's-2', nome: 'Santa Muerte', via: 'Corso Buenos Aires 88', citta: 'Milano', lat: 45.4842, lon: 9.2119, voto: 4.6, recensioni: 138, orari: 'Mar-Sab 12-21', bio: 'Old school e giapponese tradizionale. Flash sempre pronti, walk-in il sabato.' },
+    { id: 's-3', nome: 'Linea Sottile', via: 'Via del Governo Vecchio 12', citta: 'Roma', lat: 41.8992, lon: 12.4693, voto: 4.9, recensioni: 96, orari: 'Lun-Ven 10-19', bio: 'Fine line e micro-realismo. Studio privato, solo su appuntamento.' },
+  ];
+
+  const artisti = [
+    { id: 'a-1', nome: 'Marco Villa', handle: 'marcovilla.ink', studioId: 's-1', citta: 'Milano', stili: ['blackwork', 'dotwork', 'geometrico'], voto: 4.9, recensioni: 87, tariffa: 120, bio: 'Blackwork e dotwork. Dieci anni di aghi, zero scorciatoie.' },
+    { id: 'a-2', nome: 'Sara Oro', handle: 'saraoro', studioId: 's-1', citta: 'Milano', stili: ['realistico', 'blackwork'], voto: 4.7, recensioni: 64, tariffa: 140, bio: 'Realismo in bianco e nero, ritratti e animali.' },
+    { id: 'a-3', nome: 'Tony Ferro', handle: 'tonyferro', studioId: 's-2', citta: 'Milano', stili: ['old school', 'giapponese'], voto: 4.6, recensioni: 121, tariffa: 100, bio: 'Tradizionale americano e irezumi. I flash li disegno a mano ogni settimana.' },
+    { id: 'a-4', nome: 'Elena Pini', handle: 'elenapini', studioId: 's-3', citta: 'Roma', stili: ['minimal', 'lettering'], voto: 4.9, recensioni: 73, tariffa: 110, bio: 'Fine line e minimal. Ogni disegno è unico e non viene ripetuto.' },
+    { id: 'a-5', nome: 'Dario Neri', handle: 'darioneri.tattoo', studioId: null, citta: 'Bologna', lat: 44.4949, lon: 11.3426, stili: ['acquerello', 'geometrico'], voto: 4.5, recensioni: 41, tariffa: 90, bio: 'Freelance, giro per convention e guest spot. Scrivimi per le date.' },
+  ];
+
+  const tatuaggi = [
+    { id: 't-1', titolo: 'Serpente geometrico', disegno: 'serpente', artistaId: 'a-1', stile: 'geometrico', zona: 'avambraccio', colore: 'black & grey', misura: 'medio', flash: true, prezzo: 350, ore: 3, like: 1240, testo: 'Composizione geometrica su avambraccio, si adatta anche al polpaccio.' },
+    { id: 't-2', titolo: 'Profilo in una linea', disegno: 'profilo', artistaId: 'a-2', stile: 'realistico', zona: 'braccio', colore: 'black & grey', misura: 'grande', flash: false, prezzo: 900, ore: 8, like: 3120, testo: 'Lavoro eseguito in due sedute, foto della pelle guarita a tre mesi.' },
+    { id: 't-3', titolo: 'Rondine tradizionale', disegno: 'rondine', artistaId: 'a-3', stile: 'old school', zona: 'petto', colore: 'a colori', misura: 'piccolo', flash: true, prezzo: 180, ore: 2, like: 860, testo: 'Flash classico, disponibile anche per mano o caviglia.' },
+    { id: 't-4', titolo: 'Drago irezumi', disegno: 'drago', artistaId: 'a-3', stile: 'giapponese', zona: 'schiena', colore: 'a colori', misura: 'grande', flash: false, prezzo: 2400, ore: 20, like: 5402, testo: 'Progetto completo di schiena, cinque sedute da quattro ore.' },
+    { id: 't-5', titolo: 'Ramo minimal', disegno: 'ramo', artistaId: 'a-4', stile: 'minimal', zona: 'caviglia', colore: 'black & grey', misura: 'piccolo', flash: true, prezzo: 120, ore: 1, like: 2210, testo: 'Linea sottile, il più richiesto come primo tatuaggio.' },
+    { id: 't-6', titolo: 'Lettering corsivo', disegno: 'lettering', artistaId: 'a-4', stile: 'lettering', zona: 'costato', colore: 'black & grey', misura: 'medio', flash: true, prezzo: 260, ore: 2, like: 640, testo: 'Testo personalizzabile: il disegno si adatta alla frase che scegli.' },
+    { id: 't-7', titolo: 'Mandala dotwork', disegno: 'mandala', artistaId: 'a-1', stile: 'dotwork', zona: 'spalla', colore: 'black & grey', misura: 'medio', flash: true, prezzo: 480, ore: 5, like: 1780, testo: 'Costruito sulla spalla, si estende verso il petto su richiesta.' },
+    { id: 't-8', titolo: 'Onda acquerello', disegno: 'onda', artistaId: 'a-5', stile: 'acquerello', zona: 'gamba', colore: 'a colori', misura: 'medio', flash: true, prezzo: 400, ore: 4, like: 930, testo: 'Guest spot: chiedimi le date disponibili nella tua città.' },
+    { id: 't-9', titolo: 'Teschio pieno', disegno: 'teschio', artistaId: 'a-1', stile: 'blackwork', zona: 'polpaccio', colore: 'black & grey', misura: 'grande', flash: false, prezzo: 700, ore: 7, like: 2890, testo: 'Nero pieno con texture a contrasto, guarito da sei mesi.' },
+    { id: 't-10', titolo: 'Tigre tradizionale', disegno: 'tigre', artistaId: 'a-3', stile: 'old school', zona: 'braccio', colore: 'a colori', misura: 'medio', flash: true, prezzo: 320, ore: 3, like: 1510, testo: 'Linee spesse e colori pieni: invecchia bene negli anni.' },
+    { id: 't-11', titolo: 'Farfalla fine line', disegno: 'farfalla', artistaId: 'a-4', stile: 'minimal', zona: 'mano', colore: 'black & grey', misura: 'piccolo', flash: true, prezzo: 150, ore: 1, like: 4020, testo: 'Pensata per il dorso della mano o il polso interno.' },
+    { id: 't-12', titolo: 'Geometria sacra', disegno: 'geometria', artistaId: 'a-5', stile: 'geometrico', zona: 'avambraccio', colore: 'black & grey', misura: 'medio', flash: true, prezzo: 380, ore: 4, like: 1120, testo: 'Composizione simmetrica, adattabile a braccio o schiena.' },
+  ];
+
+  const GIORNI = ['dom', 'lun', 'mar', 'mer', 'gio', 'ven', 'sab'];
+  const MESI = ['gen', 'feb', 'mar', 'apr', 'mag', 'giu', 'lug', 'ago', 'set', 'ott', 'nov', 'dic'];
+
+  function dataFra(giorni) {
+    const d = new Date();
+    d.setDate(d.getDate() + giorni);
+    return d;
+  }
+  const formattaData = (d) => `${GIORNI[d.getDay()]} ${d.getDate()} ${MESI[d.getMonth()]}`;
+  const chiaveData = (d) => d.toISOString().slice(0, 10);
+
+  const agenda = [2, 5, 9, 13, 18].map((g, i) => {
+    const d = dataFra(g);
+    return { chiave: chiaveData(d), testo: formattaData(d), slot: i % 2 ? ['11:00', '15:00', '18:30'] : ['10:00', '13:30', '16:00'] };
+  });
+
+  const stato = {
+    vista: { nome: 'feed' },
+    filtri: { testo: '', stile: null, zona: null, soloFlash: false, budget: null },
+    piaciuti: new Set(['t-1']),
+    salvati: new Set(['t-5', 't-11']),
+    prova: null,
+    prenotazioni: [
+      { id: 'p-1', tatuaggioId: 't-5', artistaId: 'a-4', data: agenda[1].testo, slot: '16:00', zona: 'caviglia', stato: 'confermata', note: 'Vorrei il ramo un po’ più lungo, verso il polpaccio.' },
+    ],
+  };
+
+  const artistaDi = (id) => artisti.find((a) => a.id === id);
+  const studioDi = (id) => studi.find((s) => s.id === id);
+  const tatuaggioDi = (id) => tatuaggi.find((t) => t.id === id);
+  const luogoDi = (artista) => (artista.studioId ? studioDi(artista.studioId) : null);
+  const iniziali = (nome) => nome.split(' ').map((p) => p[0]).join('');
+  const formattaLike = (n) => (n < 1000 ? String(n) : (n / 1000).toFixed(1).replace('.0', '') + 'k');
+
+  function risultati() {
+    const f = stato.filtri;
+    const testo = f.testo.trim().toLowerCase();
+    return tatuaggi.filter((t) => {
+      const a = artistaDi(t.artistaId);
+      const s = luogoDi(a);
+      if (f.stile && t.stile !== f.stile) return false;
+      if (f.zona && t.zona !== f.zona) return false;
+      if (f.soloFlash && !t.flash) return false;
+      if (f.budget && t.prezzo > f.budget) return false;
+      if (testo) {
+        const campi = [t.titolo, t.testo, t.stile, t.zona, a.nome, s ? s.nome : a.citta, s ? s.citta : a.citta].join(' ').toLowerCase();
+        if (!campi.includes(testo)) return false;
+      }
+      return true;
+    });
+  }
+
+  /* ============================================================
+     Icone
+     ============================================================ */
+
+  const ICONE = {
+    feed: '<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+    cerca: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+    mappa: '<path d="m9 3 6 3 6-3v15l-6 3-6-3-6 3V6z"/><path d="M9 3v15M15 6v15"/>',
+    agenda: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    profilo: '<circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/>',
+    cuore: '<path d="M12 20s-7-4.5-7-9.5A4 4 0 0 1 12 7a4 4 0 0 1 7 3.5C19 15.5 12 20 12 20z"/>',
+    pelle: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><path d="M14 3h7v7M3 14v7h7"/>',
+    calendario: '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+    segnalibro: '<path d="M6 3h12v18l-6-4.5L6 21z"/>',
+    freccia: '<path d="M15 5l-7 7 7 7"/>',
+  };
+  const icona = (nome, classe) => `<svg viewBox="0 0 24 24" class="${classe || ''}" aria-hidden="true">${ICONE[nome]}</svg>`;
+
+  /* ============================================================
+     Schermate
+     ============================================================ */
+
+  const STILI = ['old school', 'realistico', 'blackwork', 'minimal', 'giapponese', 'geometrico', 'lettering', 'acquerello', 'dotwork'];
+  const ZONE = ['avambraccio', 'braccio', 'mano', 'spalla', 'schiena', 'petto', 'costato', 'gamba', 'polpaccio', 'caviglia'];
+  const BUDGET = [150, 300, 600, 1200];
+
+  function schedaFlash(t, classe) {
+    const bollino = t.flash
+      ? '<span class="bollino">Prenotabile</span>'
+      : '<span class="bollino eseguito">Eseguito</span>';
+    return `<div class="flash ${classe || ''}">${bollino}${svgDi(t.disegno)}</div>`;
+  }
+
+  function vistaFeed() {
+    const lista = risultati();
+    const chips = STILI.map((s) => `<button class="chip" data-azione="stile" data-valore="${s}" aria-pressed="${stato.filtri.stile === s}">${s}</button>`).join('');
+
+    const post = lista.map((t) => {
+      const a = artistaDi(t.artistaId);
+      const s = luogoDi(a);
+      const piace = stato.piaciuti.has(t.id);
+      const salvo = stato.salvati.has(t.id);
+      return `
+      <article class="post">
+        <header class="testata-post">
+          <button class="ritratto" data-azione="artista" data-valore="${a.id}" aria-label="Profilo di ${a.nome}">${iniziali(a.nome)}</button>
+          <div>
+            <div class="nome-artista">${a.nome}</div>
+            <div class="luogo-post">${s ? s.nome + ' · ' + s.citta : 'Freelance · ' + a.citta}</div>
+          </div>
+        </header>
+        <button data-azione="tatuaggio" data-valore="${t.id}" style="display:block;width:100%">${schedaFlash(t)}</button>
+        <div class="azioni-post">
+          <button class="${piace ? 'attivo' : ''}" data-azione="like" data-valore="${t.id}" aria-label="Mi piace" aria-pressed="${piace}">${icona('cuore')}</button>
+          <button data-azione="prova" data-valore="${t.id}" aria-label="Provalo sulla pelle">${icona('pelle')}</button>
+          <button data-azione="prenota" data-valore="${t.id}" aria-label="Prenota">${icona('calendario')}</button>
+          <button class="spinta ${salvo ? 'attivo' : ''}" data-azione="salva" data-valore="${t.id}" aria-label="Salva" aria-pressed="${salvo}">${icona('segnalibro')}</button>
+        </div>
+        <div class="corpo-post">
+          <div class="conteggio">${formattaLike(t.like + (piace ? 1 : 0))} mi piace</div>
+          <div class="testo"><b>${t.titolo}</b> ${t.testo}</div>
+          <div class="meta">${t.stile} · ${t.zona} · ${t.prezzo} € · ${t.ore} h</div>
+        </div>
+      </article>`;
+    }).join('');
+
+    return `<div class="strisciaChip" style="padding-top:12px">${chips}</div>${post || vuoto('Nessun tatuaggio con questo stile.')}`;
+  }
+
+  function vistaEsplora() {
+    const lista = risultati();
+    const chipStile = STILI.map((s) => `<button class="chip" data-azione="stile" data-valore="${s}" aria-pressed="${stato.filtri.stile === s}">${s}</button>`).join('');
+    const chipZona = ZONE.map((z) => `<button class="chip" data-azione="zona" data-valore="${z}" aria-pressed="${stato.filtri.zona === z}">${z}</button>`).join('');
+    const chipBudget = BUDGET.map((b) => `<button class="chip carta" data-azione="budget" data-valore="${b}" aria-pressed="${stato.filtri.budget === b}">fino a ${b} €</button>`).join('') +
+      `<button class="chip carta" data-azione="flash" aria-pressed="${stato.filtri.soloFlash}">solo prenotabili</button>`;
+
+    const celle = lista.map((t) => {
+      const a = artistaDi(t.artistaId);
+      const s = luogoDi(a);
+      return `<button class="cella" data-azione="tatuaggio" data-valore="${t.id}">
+        ${schedaFlash(t)}
+        <span class="titolo">${t.titolo}</span>
+        <span class="sotto">${s ? s.nome : a.nome} · ${s ? s.citta : a.citta}</span>
+        <span class="prezzo">${t.prezzo} €</span>
+      </button>`;
+    }).join('');
+
+    return `
+      <div class="sezione" style="gap:12px">
+        <div class="barra-ricerca">
+          ${icona('cerca')}
+          <input id="campoRicerca" type="text" inputmode="search" placeholder="Cerca soggetto, stile, artista, città" value="${stato.filtri.testo.replace(/"/g, '&quot;')}" autocomplete="off">
+        </div>
+      </div>
+      <p class="etichetta" style="padding:0 16px">Stile</p>
+      <div class="strisciaChip">${chipStile}</div>
+      <p class="etichetta" style="padding:14px 16px 0">Zona del corpo</p>
+      <div class="strisciaChip">${chipZona}</div>
+      <p class="etichetta" style="padding:14px 16px 0">Budget e disponibilità</p>
+      <div class="strisciaChip">${chipBudget}</div>
+      <div class="conteggio-risultati" style="padding-top:18px">
+        <span class="numero">${lista.length} ${lista.length === 1 ? 'risultato' : 'risultati'}</span>
+        <button class="link" data-azione="tab" data-valore="mappa">Vedi sulla mappa →</button>
+      </div>
+      ${lista.length ? `<div class="griglia" style="padding-top:12px">${celle}</div>` : vuoto('Nessun risultato. Prova a togliere un filtro.')}`;
+  }
+
+  function vistaMappa() {
+    const lista = risultati();
+    const gruppi = new Map();
+    lista.forEach((t) => {
+      const a = artistaDi(t.artistaId);
+      const s = luogoDi(a);
+      const chiave = s ? s.id : a.id;
+      if (!gruppi.has(chiave)) {
+        gruppi.set(chiave, {
+          chiave,
+          nome: s ? s.nome : a.nome,
+          sotto: s ? `${s.via}, ${s.citta}` : `Freelance · ${a.citta}`,
+          voto: s ? s.voto : a.voto,
+          lat: s ? s.lat : a.lat,
+          lon: s ? s.lon : a.lon,
+          tipo: s ? 'studio' : 'freelance',
+          artistaId: a.id,
+          studioId: s ? s.id : null,
+          opere: [],
+        });
+      }
+      gruppi.get(chiave).opere.push(t);
+    });
+    const luoghi = [...gruppi.values()];
+
+    const W = 440, H = 330;
+    const lats = luoghi.map((l) => l.lat), lons = luoghi.map((l) => l.lon);
+    const minLat = Math.min(...lats, 41.8), maxLat = Math.max(...lats, 45.6);
+    const minLon = Math.min(...lons, 9.0), maxLon = Math.max(...lons, 12.6);
+    const px = (l) => 40 + ((l.lon - minLon) / Math.max(maxLon - minLon, 0.01)) * (W - 80);
+    const py = (l) => H - 50 - ((l.lat - minLat) / Math.max(maxLat - minLat, 0.01)) * (H - 100);
+
+    const strade = ripeti(7, (i) => `<path d="M0 ${28 + i * 46} C 120 ${14 + i * 46}, 280 ${52 + i * 46}, ${W} ${24 + i * 46}" stroke="#232830" stroke-width="${i % 3 === 0 ? 6 : 2}" fill="none"/>`) +
+      ripeti(6, (i) => `<path d="M${30 + i * 74} 0 C ${50 + i * 74} 110, ${10 + i * 74} 220, ${36 + i * 74} ${H}" stroke="#232830" stroke-width="${i % 2 ? 2 : 5}" fill="none"/>`);
+
+    const marcatori = luoghi.map((l) => {
+      const x = px(l), y = py(l);
+      const attivo = stato.vista.luogo === l.chiave;
+      return `<g class="marcatore" data-azione="luogo" data-valore="${l.chiave}" tabindex="0" role="button" aria-label="${l.nome}, ${l.opere.length} tatuaggi">
+        <path d="M${x} ${y} c -13 -16 -20 -24 -20 -33 a 20 20 0 1 1 40 0 c 0 9 -7 17 -20 33 z" fill="${attivo ? '#C1372C' : '#EDE3D2'}" stroke="#0C0A0D" stroke-width="2"/>
+        <text x="${x}" y="${y - 28}" text-anchor="middle" fill="${attivo ? '#fff' : '#141014'}" font-weight="700">${l.opere.length}</text>
+        <text x="${x}" y="${y + 16}" text-anchor="middle">${l.nome}</text>
+      </g>`;
+    }).join('');
+
+    const selezionato = luoghi.find((l) => l.chiave === stato.vista.luogo) || luoghi[0];
+    const scheda = selezionato ? `
+      <button class="scheda-luogo" data-azione="${selezionato.studioId ? 'studio' : 'artista'}" data-valore="${selezionato.studioId || selezionato.artistaId}">
+        ${schedaFlash(selezionato.opere[0])}
+        <span style="flex:1">
+          <span class="nome" style="display:block">${selezionato.nome}</span>
+          <span class="via" style="display:block">${selezionato.sotto}</span>
+          <span class="stelle" style="display:block">★ ${selezionato.voto.toFixed(1)} · ${selezionato.opere.length} lavori in linea con la ricerca</span>
+          <span class="link" style="display:block;margin-top:6px">Apri il profilo →</span>
+        </span>
+      </button>` : '';
+
+    return `
+      <div class="mappa-guscio">
+        <svg class="mappa" viewBox="0 0 ${W} ${H}" role="img" aria-label="Mappa schematica degli studi trovati">
+          <rect width="${W}" height="${H}" fill="#14161A"/>
+          <path d="M0 250 C 120 232, 240 268, ${W} 244 L${W} ${H} L0 ${H} Z" fill="#101820"/>
+          ${strade}
+          ${marcatori}
+        </svg>
+        <p class="nota-mappa">Mappa schematica della demo · nell'app sono le mappe di sistema</p>
+      </div>
+      ${scheda}
+      <div class="sezione">
+        <p class="etichetta">Filtri attivi</p>
+        <div class="riga-pulsanti" style="flex-wrap:wrap">
+          <button class="pulsante secondario" data-azione="tab" data-valore="esplora">Cambia ricerca</button>
+        </div>
+        <p class="suggerimento">La ricerca e la mappa condividono gli stessi filtri: ${lista.length} tatuaggi in ${luoghi.length} ${luoghi.length === 1 ? 'luogo' : 'luoghi'}.</p>
+      </div>`;
+  }
+
+  function vistaTatuaggio(id) {
+    const t = tatuaggioDi(id);
+    const a = artistaDi(t.artistaId);
+    const s = luogoDi(a);
+    const salvo = stato.salvati.has(t.id);
+    return `
+      ${schedaFlash(t)}
+      <div class="sezione">
+        <div class="dettaglio-testa">
+          <h2 class="titolo-opera">${t.titolo}</h2>
+        </div>
+        <p class="paragrafo">${t.testo}</p>
+        <dl class="scheda-dati">
+          <div><dt>Prezzo</dt><dd>${t.prezzo} €</dd></div>
+          <div><dt>Durata</dt><dd>${t.ore} h</dd></div>
+          <div><dt>Misura</dt><dd>${t.misura}</dd></div>
+        </dl>
+        <div class="strisciaChip" style="padding:0">
+          <span class="chip">${t.stile}</span>
+          <span class="chip">${t.zona}</span>
+          <span class="chip">${t.colore}</span>
+        </div>
+        <button class="riga-artista" data-azione="artista" data-valore="${a.id}">
+          <span class="ritratto">${iniziali(a.nome)}</span>
+          <span style="flex:1">
+            <span class="nome-artista" style="display:block">${a.nome}</span>
+            <span class="luogo-post" style="display:block">${s ? s.nome + ' · ' + s.via + ', ' + s.citta : 'Freelance · ' + a.citta}</span>
+            <span class="stelle" style="display:block;font-family:var(--etichetta);color:var(--ocra)">★ ${a.voto.toFixed(1)} · ${a.recensioni} recensioni</span>
+          </span>
+        </button>
+        <button class="pulsante" data-azione="prova" data-valore="${t.id}">${icona('pelle')} Provalo sulla tua pelle</button>
+        <div class="riga-pulsanti">
+          <button class="pulsante secondario" data-azione="prenota" data-valore="${t.id}">Prenota la seduta</button>
+          <button class="pulsante secondario" data-azione="salva" data-valore="${t.id}">${salvo ? 'Salvato' : 'Salva'}</button>
+        </div>
+      </div>`;
+  }
+
+  function vistaArtista(id) {
+    const a = artistaDi(id);
+    const s = luogoDi(a);
+    const opere = tatuaggi.filter((t) => t.artistaId === a.id);
+    const eseguiti = opere.filter((t) => !t.flash);
+    const flash = opere.filter((t) => t.flash);
+    const griglia = (lista) => lista.length
+      ? `<div class="griglia" style="padding:0">${lista.map((t) => `<button class="cella" data-azione="tatuaggio" data-valore="${t.id}">${schedaFlash(t)}<span class="titolo">${t.titolo}</span><span class="prezzo">${t.prezzo} €</span></button>`).join('')}</div>`
+      : '<p class="suggerimento">Niente in questa sezione, per ora.</p>';
+
+    return `
+      <div class="sezione">
+        <div style="display:flex;gap:14px;align-items:center">
+          <span class="ritratto" style="width:64px;height:64px;font-size:22px">${iniziali(a.nome)}</span>
+          <div>
+            <h2 class="titolo-opera" style="font-size:22px">${a.nome}</h2>
+            <p class="luogo-post">@${a.handle} · ★ ${a.voto.toFixed(1)} · ${a.recensioni} recensioni</p>
+          </div>
+        </div>
+        <p class="paragrafo">${a.bio}</p>
+        <div class="strisciaChip" style="padding:0">${a.stili.map((x) => `<span class="chip">${x}</span>`).join('')}</div>
+        ${s ? `<button class="riga-artista" data-azione="studio" data-valore="${s.id}">
+          <span style="flex:1"><span class="nome-artista" style="display:block">${s.nome}</span><span class="luogo-post">${s.via}, ${s.citta} · ${s.orari}</span></span>
+          <span class="link">Studio →</span>
+        </button>` : `<div class="avviso">Tatuatore freelance. Lavora su appuntamento a ${a.citta} e in guest spot: le date aperte compaiono qui.</div>`}
+        <dl class="scheda-dati">
+          <div><dt>Tariffa</dt><dd>${a.tariffa} €/h</dd></div>
+          <div><dt>Lavori</dt><dd>${eseguiti.length}</dd></div>
+          <div><dt>Flash</dt><dd>${flash.length}</dd></div>
+        </dl>
+        <button class="pulsante" data-azione="prenotaArtista" data-valore="${a.id}">Prenota una seduta</button>
+        <p class="etichetta" style="margin-top:6px">Flash prenotabili</p>
+        ${griglia(flash)}
+        <p class="etichetta" style="margin-top:6px">Lavori eseguiti</p>
+        ${griglia(eseguiti)}
+      </div>`;
+  }
+
+  function vistaStudio(id) {
+    const s = studioDi(id);
+    const team = artisti.filter((a) => a.studioId === s.id);
+    const opere = tatuaggi.filter((t) => team.some((a) => a.id === t.artistaId));
+    return `
+      <div class="sezione">
+        <h2 class="titolo-opera">${s.nome}</h2>
+        <p class="luogo-post">${s.via}, ${s.citta} · ★ ${s.voto.toFixed(1)} · ${s.recensioni} recensioni</p>
+        <p class="paragrafo">${s.bio}</p>
+        <dl class="scheda-dati">
+          <div><dt>Artisti</dt><dd>${team.length}</dd></div>
+          <div><dt>Lavori</dt><dd>${opere.length}</dd></div>
+          <div><dt>Orari</dt><dd style="font-size:13px">${s.orari}</dd></div>
+        </dl>
+        <p class="etichetta" style="margin-top:6px">Artisti residenti</p>
+        ${team.map((a) => `<button class="riga-artista" data-azione="artista" data-valore="${a.id}">
+          <span class="ritratto">${iniziali(a.nome)}</span>
+          <span style="flex:1">
+            <span class="nome-artista" style="display:block">${a.nome}</span>
+            <span class="luogo-post">${a.stili.join(' · ')}</span>
+          </span>
+          <span class="link">★ ${a.voto.toFixed(1)}</span>
+        </button>`).join('')}
+        <p class="etichetta" style="margin-top:6px">Portfolio dello studio</p>
+        <div class="griglia" style="padding:0">
+          ${opere.map((t) => `<button class="cella" data-azione="tatuaggio" data-valore="${t.id}">${schedaFlash(t)}<span class="titolo">${t.titolo}</span><span class="sotto">${artistaDi(t.artistaId).nome}</span></button>`).join('')}
+        </div>
+      </div>`;
+  }
+
+  function vistaProva(id) {
+    const t = tatuaggioDi(id);
+    return `
+      <div class="studio-prova">
+        <div class="tela" id="tela">
+          <canvas class="sfondo" id="pelleFinta" width="600" height="800"></canvas>
+          <img class="sfondo" id="fotoPelle" alt="" hidden>
+          <div id="stencilMobile" class="fonde">${svgDi(t.disegno)}</div>
+        </div>
+
+        <div class="sorgente-foto">
+          <button class="pulsante" id="scattaFoto">Usa la fotocamera</button>
+          <button class="pulsante secondario" id="caricaFoto">Scegli una foto</button>
+        </div>
+        <input type="file" id="fileFoto" accept="image/*" capture="environment">
+
+        <div class="comandi">
+          <label for="dimensione">Misura</label>
+          <input type="range" id="dimensione" min="25" max="115" value="52">
+          <label for="rotazione">Rotazione</label>
+          <input type="range" id="rotazione" min="-180" max="180" value="0">
+          <label for="opacita">Inchiostro</label>
+          <input type="range" id="opacita" min="25" max="100" value="88">
+        </div>
+
+        <label class="interruttore"><input type="checkbox" id="fusione" checked> Fondi con la pelle invece di sovrapporre</label>
+        <p class="suggerimento">Trascina il disegno con un dito per spostarlo. Con due dita lo ingrandisci e lo ruoti. Finché non scegli una foto, sotto c'è una pelle di esempio.</p>
+
+        <button class="pulsante" id="cattura">Cattura l'anteprima</button>
+        <div class="riga-pulsanti">
+          <button class="pulsante secondario" data-azione="prenota" data-valore="${t.id}">Prenota con questa anteprima</button>
+        </div>
+      </div>`;
+  }
+
+  function vistaPrenota(tatuaggioId, artistaId) {
+    const t = tatuaggioId ? tatuaggioDi(tatuaggioId) : null;
+    const a = artistaDi(artistaId || (t && t.artistaId));
+    const s = luogoDi(a);
+    const giorno = stato.vista.giorno || agenda[0].chiave;
+    const slotScelto = stato.vista.slot || agenda[0].slot[0];
+    const giornoAttivo = agenda.find((g) => g.chiave === giorno) || agenda[0];
+
+    return `
+      <div class="sezione">
+        <div style="display:flex;gap:12px">
+          ${stato.prova && t && stato.prova.tatuaggioId === t.id
+            ? `<img class="anteprima" src="${stato.prova.immagine}" alt="Anteprima del tatuaggio sulla pelle" style="width:86px;flex:0 0 86px;aspect-ratio:3/4;object-fit:cover;border-radius:6px">`
+            : (t ? `<div style="width:86px;flex:0 0 86px">${schedaFlash(t)}</div>` : '')}
+          <div style="flex:1">
+            <h2 class="titolo-opera" style="font-size:20px">${t ? t.titolo : 'Progetto su misura'}</h2>
+            <p class="luogo-post">${a.nome}${s ? ' · ' + s.nome : ' · freelance'}</p>
+            <p class="luogo-post">Tariffa ${a.tariffa} €/h${t ? ' · circa ' + t.ore + ' h' : ''}</p>
+            ${stato.prova && t && stato.prova.tatuaggioId === t.id ? '<p class="stato richiesta" style="margin-top:6px">Anteprima sulla pelle allegata</p>' : ''}
+          </div>
+        </div>
+
+        <p class="etichetta">Quando</p>
+        <div class="strisciaChip" style="padding:0">
+          ${agenda.map((g) => `<button class="chip" data-azione="giorno" data-valore="${g.chiave}" aria-pressed="${g.chiave === giorno}">${g.testo}</button>`).join('')}
+        </div>
+        <div class="strisciaChip" style="padding:0">
+          ${giornoAttivo.slot.map((sl) => `<button class="chip carta" data-azione="slot" data-valore="${sl}" aria-pressed="${sl === slotScelto}">${sl}</button>`).join('')}
+        </div>
+
+        <p class="etichetta">Dove sul corpo</p>
+        <div class="strisciaChip" style="padding:0">
+          ${ZONE.map((z) => `<button class="chip" data-azione="zonaPrenota" data-valore="${z}" aria-pressed="${(stato.vista.zona || (t && t.zona)) === z}">${z}</button>`).join('')}
+        </div>
+
+        <div class="campo">
+          <label class="etichetta" for="notePrenota">Note per l'artista</label>
+          <textarea id="notePrenota" placeholder="Racconta l'idea, le misure, eventuali cicatrici o coperture."></textarea>
+        </div>
+
+        <button class="pulsante" data-azione="confermaPrenota" data-valore="${a.id}">Invia la richiesta</button>
+        <p class="suggerimento">La richiesta non è vincolante: l'artista conferma data e acconto prima di bloccare lo slot.</p>
+      </div>`;
+  }
+
+  function vistaConferma() {
+    return `
+      <div class="sezione" style="padding-top:48px;align-items:center;text-align:center">
+        <svg viewBox="0 0 24 24" style="width:56px;height:56px;stroke:var(--oliva);fill:none;stroke-width:1.6"><circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/></svg>
+        <h2 class="titolo-opera" style="font-size:24px">Richiesta inviata</h2>
+        <p class="paragrafo" style="max-width:32ch">L'artista riceve la richiesta e ti risponde con la conferma. La trovi nella scheda Prenotazioni.</p>
+        <button class="pulsante" data-azione="tab" data-valore="agenda">Vedi le mie prenotazioni</button>
+      </div>`;
+  }
+
+  function vistaPrenotazioni() {
+    if (!stato.prenotazioni.length) return vuoto('Nessuna prenotazione. Scegli un tatuaggio dal feed e prenota la seduta.');
+    return `<div class="sezione">${stato.prenotazioni.map((p) => {
+      const t = p.tatuaggioId ? tatuaggioDi(p.tatuaggioId) : null;
+      const a = artistaDi(p.artistaId);
+      const s = luogoDi(a);
+      return `<article class="prenotazione">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <span class="stato ${p.stato}">${p.stato === 'confermata' ? 'Confermata' : 'In attesa di conferma'}</span>
+          <span class="luogo-post">${p.data} · ${p.slot}</span>
+        </div>
+        <div class="riga">
+          ${p.anteprima ? `<img class="anteprima" src="${p.anteprima}" alt="Anteprima sulla pelle">` : (t ? schedaFlash(t, '') : '')}
+          <div style="flex:1">
+            <div class="nome-artista">${t ? t.titolo : 'Progetto su misura'}</div>
+            <div class="luogo-post">${a.nome}${s ? ' · ' + s.nome + ', ' + s.citta : ' · freelance'}</div>
+            <div class="luogo-post">${p.zona}${t ? ' · circa ' + t.prezzo + ' €' : ''}</div>
+            ${p.note ? `<p class="suggerimento" style="margin-top:6px">“${p.note}”</p>` : ''}
+          </div>
+        </div>
+        <div class="riga-pulsanti">
+          <button class="pulsante secondario" data-azione="artista" data-valore="${a.id}">Vedi artista</button>
+          <button class="pulsante secondario" data-azione="annulla" data-valore="${p.id}">Annulla</button>
+        </div>
+      </article>`;
+    }).join('')}</div>`;
+  }
+
+  function vistaProfilo() {
+    const salvati = tatuaggi.filter((t) => stato.salvati.has(t.id));
+    const richieste = stato.prenotazioni.filter((p) => p.stato === 'richiesta');
+    return `
+      <div class="sezione">
+        <div style="display:flex;gap:14px;align-items:center">
+          <span class="ritratto" style="width:60px;height:60px;font-size:20px">GF</span>
+          <div>
+            <h2 class="titolo-opera" style="font-size:22px">Giulia Ferri</h2>
+            <p class="luogo-post">@giuliaf · Milano</p>
+          </div>
+        </div>
+
+        <p class="etichetta">Salvati (${salvati.length})</p>
+        ${salvati.length
+          ? `<div class="griglia" style="padding:0">${salvati.map((t) => `<button class="cella" data-azione="tatuaggio" data-valore="${t.id}">${schedaFlash(t)}<span class="titolo">${t.titolo}</span></button>`).join('')}</div>`
+          : '<p class="suggerimento">Tocca il segnalibro su un tatuaggio per ritrovarlo qui.</p>'}
+
+        <p class="etichetta" style="margin-top:10px">Lato studio</p>
+        <div class="avviso">Con un account studio la stessa app cambia faccia: gestisci gli artisti residenti, il portfolio, i flash prenotabili e l'agenda. Qui sotto la vista che vede lo studio Nero Inchiostro.</div>
+        <div class="metriche">
+          <div class="metrica"><div class="valore">2</div><div class="voce">artisti</div></div>
+          <div class="metrica"><div class="valore">${tatuaggi.filter((t) => ['a-1', 'a-2'].includes(t.artistaId)).length}</div><div class="voce">lavori</div></div>
+          <div class="metrica"><div class="valore">${tatuaggi.filter((t) => ['a-1', 'a-2'].includes(t.artistaId) && t.flash).length}</div><div class="voce">flash</div></div>
+          <div class="metrica"><div class="valore">${richieste.length}</div><div class="voce">richieste</div></div>
+        </div>
+        <button class="pulsante secondario" data-azione="studio" data-valore="s-1">Apri il profilo dello studio</button>
+      </div>`;
+  }
+
+  const vuoto = (testo) => `<p class="vuoto">${testo}</p>`;
+
+  /* ============================================================
+     Render
+     ============================================================ */
+
+  const schermo = document.getElementById('schermo');
+  const barraAlta = document.getElementById('barraAlta');
+  const tabbar = document.getElementById('tabbar');
+
+  const TAB = [
+    { id: 'feed', voce: 'Feed', icona: 'feed' },
+    { id: 'esplora', voce: 'Esplora', icona: 'cerca' },
+    { id: 'mappa', voce: 'Mappa', icona: 'mappa' },
+    { id: 'agenda', voce: 'Sedute', icona: 'agenda' },
+    { id: 'profilo', voce: 'Profilo', icona: 'profilo' },
+  ];
+
+  const TITOLI = {
+    esplora: 'Esplora', mappa: 'Mappa', agenda: 'Le mie sedute', profilo: 'Profilo',
+    tatuaggio: 'Tatuaggio', artista: 'Artista', studio: 'Studio',
+    prova: 'Prova sulla pelle', prenota: 'Prenota', conferma: 'Richiesta inviata',
+  };
+
+  const TAB_PRINCIPALI = ['feed', 'esplora', 'mappa', 'agenda', 'profilo'];
+
+  function disegnaBarra() {
+    const v = stato.vista.nome;
+    if (v === 'feed') {
+      barraAlta.innerHTML = `<span class="marchio">Ink<span>Spot</span></span>
+        <button class="spinta link" data-azione="tab" data-valore="esplora">Cerca un'idea</button>`;
+    } else if (TAB_PRINCIPALI.includes(v)) {
+      barraAlta.innerHTML = `<span class="titolo-schermata">${TITOLI[v]}</span>`;
+    } else {
+      barraAlta.innerHTML = `<button class="indietro" data-azione="indietro">${icona('freccia')} Indietro</button>
+        <span class="titolo-schermata spinta">${TITOLI[v] || ''}</span>`;
+    }
+  }
+
+  function disegnaTab() {
+    tabbar.innerHTML = TAB.map((t) => `<button data-azione="tab" data-valore="${t.id}" ${stato.vista.nome === t.id ? 'aria-current="page"' : ''}>
+      ${icona(t.icona)}<span>${t.voce}</span></button>`).join('');
+  }
+
+  let precedente = [];
+
+  function vai(vista, impila) {
+    if (impila !== false && stato.vista.nome !== vista.nome) precedente.push(stato.vista);
+    stato.vista = vista;
+    disegna();
+    schermo.scrollTop = 0;
+  }
+
+  function disegna() {
+    const v = stato.vista;
+    let html = '';
+    switch (v.nome) {
+      case 'feed': html = vistaFeed(); break;
+      case 'esplora': html = vistaEsplora(); break;
+      case 'mappa': html = vistaMappa(); break;
+      case 'agenda': html = vistaPrenotazioni(); break;
+      case 'profilo': html = vistaProfilo(); break;
+      case 'tatuaggio': html = vistaTatuaggio(v.id); break;
+      case 'artista': html = vistaArtista(v.id); break;
+      case 'studio': html = vistaStudio(v.id); break;
+      case 'prova': html = vistaProva(v.id); break;
+      case 'prenota': html = vistaPrenota(v.id, v.artistaId); break;
+      case 'conferma': html = vistaConferma(); break;
+    }
+    schermo.innerHTML = html;
+    disegnaBarra();
+    disegnaTab();
+    if (v.nome === 'prova') avviaProva(v.id);
+    if (v.nome === 'esplora') collegaRicerca();
+  }
+
+  function collegaRicerca() {
+    const campo = document.getElementById('campoRicerca');
+    if (!campo) return;
+    campo.addEventListener('input', () => {
+      stato.filtri.testo = campo.value;
+      const posizione = campo.selectionStart;
+      disegna();
+      const nuovo = document.getElementById('campoRicerca');
+      if (nuovo) { nuovo.focus(); nuovo.setSelectionRange(posizione, posizione); }
+    });
+  }
+
+  /* ============================================================
+     Azioni
+     ============================================================ */
+
+  document.addEventListener('click', (e) => {
+    const bersaglio = e.target.closest('[data-azione]');
+    if (!bersaglio) return;
+    const azione = bersaglio.dataset.azione;
+    const valore = bersaglio.dataset.valore;
+
+    switch (azione) {
+      case 'tab':
+        precedente = [];
+        vai({ nome: valore }, false);
+        break;
+      case 'indietro': {
+        const prec = precedente.pop();
+        vai(prec || { nome: 'feed' }, false);
+        break;
+      }
+      case 'stile':
+        stato.filtri.stile = stato.filtri.stile === valore ? null : valore;
+        disegna();
+        break;
+      case 'zona':
+        stato.filtri.zona = stato.filtri.zona === valore ? null : valore;
+        disegna();
+        break;
+      case 'budget':
+        stato.filtri.budget = stato.filtri.budget === Number(valore) ? null : Number(valore);
+        disegna();
+        break;
+      case 'flash':
+        stato.filtri.soloFlash = !stato.filtri.soloFlash;
+        disegna();
+        break;
+      case 'like':
+        stato.piaciuti.has(valore) ? stato.piaciuti.delete(valore) : stato.piaciuti.add(valore);
+        disegna();
+        break;
+      case 'salva':
+        stato.salvati.has(valore) ? stato.salvati.delete(valore) : stato.salvati.add(valore);
+        disegna();
+        break;
+      case 'tatuaggio': vai({ nome: 'tatuaggio', id: valore }); break;
+      case 'artista': vai({ nome: 'artista', id: valore }); break;
+      case 'studio': vai({ nome: 'studio', id: valore }); break;
+      case 'luogo':
+        stato.vista = Object.assign({}, stato.vista, { luogo: valore });
+        disegna();
+        break;
+      case 'prova': vai({ nome: 'prova', id: valore }); break;
+      case 'prenota': vai({ nome: 'prenota', id: valore }); break;
+      case 'prenotaArtista': vai({ nome: 'prenota', id: null, artistaId: valore }); break;
+      case 'giorno':
+        stato.vista = Object.assign({}, stato.vista, { giorno: valore, slot: null });
+        disegna();
+        break;
+      case 'slot':
+        stato.vista = Object.assign({}, stato.vista, { slot: valore });
+        disegna();
+        break;
+      case 'zonaPrenota':
+        stato.vista = Object.assign({}, stato.vista, { zona: valore });
+        disegna();
+        break;
+      case 'confermaPrenota': {
+        const note = document.getElementById('notePrenota');
+        const t = stato.vista.id ? tatuaggioDi(stato.vista.id) : null;
+        const giorno = agenda.find((g) => g.chiave === (stato.vista.giorno || agenda[0].chiave)) || agenda[0];
+        stato.prenotazioni.unshift({
+          id: 'p-' + Date.now(),
+          tatuaggioId: t ? t.id : null,
+          artistaId: valore,
+          data: giorno.testo,
+          slot: stato.vista.slot || giorno.slot[0],
+          zona: stato.vista.zona || (t ? t.zona : 'da definire'),
+          stato: 'richiesta',
+          note: note && note.value ? note.value : '',
+          anteprima: stato.prova && t && stato.prova.tatuaggioId === t.id ? stato.prova.immagine : null,
+        });
+        precedente = [];
+        vai({ nome: 'conferma' }, false);
+        break;
+      }
+      case 'annulla':
+        stato.prenotazioni = stato.prenotazioni.filter((p) => p.id !== valore);
+        disegna();
+        break;
+    }
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const bersaglio = e.target.closest && e.target.closest('g[data-azione]');
+    if (!bersaglio) return;
+    e.preventDefault();
+    bersaglio.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
+
+  /* ============================================================
+     Prova sulla pelle: pelle di esempio, gesti, cattura
+     ============================================================ */
+
+  function disegnaPelleFinta(canvas) {
+    const ctx = canvas.getContext('2d');
+    const { width: W, height: H } = canvas;
+    const g = ctx.createLinearGradient(0, 0, W, H);
+    g.addColorStop(0, '#D8AE8C');
+    g.addColorStop(0.45, '#C3906C');
+    g.addColorStop(1, '#9E6D4F');
+    ctx.fillStyle = g;
+    ctx.fillRect(0, 0, W, H);
+
+    // volume dell'avambraccio: due ombre morbide ai lati
+    const sinistra = ctx.createLinearGradient(0, 0, W * 0.28, 0);
+    sinistra.addColorStop(0, 'rgba(60,30,16,.45)');
+    sinistra.addColorStop(1, 'rgba(60,30,16,0)');
+    ctx.fillStyle = sinistra;
+    ctx.fillRect(0, 0, W * 0.28, H);
+    const destra = ctx.createLinearGradient(W, 0, W * 0.7, 0);
+    destra.addColorStop(0, 'rgba(60,30,16,.5)');
+    destra.addColorStop(1, 'rgba(60,30,16,0)');
+    ctx.fillStyle = destra;
+    ctx.fillRect(W * 0.7, 0, W * 0.3, H);
+
+    // grana della pelle
+    for (let i = 0; i < 2600; i++) {
+      const x = Math.random() * W, y = Math.random() * H;
+      ctx.fillStyle = `rgba(${Math.random() > 0.5 ? '255,235,220' : '90,55,35'},${Math.random() * 0.06})`;
+      ctx.fillRect(x, y, 2, 2);
+    }
+  }
+
+  function avviaProva(tatuaggioId) {
+    const tela = document.getElementById('tela');
+    const stencil = document.getElementById('stencilMobile');
+    const pelleFinta = document.getElementById('pelleFinta');
+    const foto = document.getElementById('fotoPelle');
+    const file = document.getElementById('fileFoto');
+    if (!tela || !stencil) return;
+
+    disegnaPelleFinta(pelleFinta);
+
+    const posa = { x: 0, y: 0, scala: 1, rotazione: 0 };
+    const dim = document.getElementById('dimensione');
+    const rot = document.getElementById('rotazione');
+    const opa = document.getElementById('opacita');
+    const fusione = document.getElementById('fusione');
+
+    function applica() {
+      stencil.style.width = dim.value + '%';
+      stencil.style.transform = `translate(calc(-50% + ${posa.x}px), calc(-50% + ${posa.y}px)) rotate(${rot.value}deg)`;
+      stencil.style.opacity = opa.value / 100;
+      stencil.classList.toggle('fonde', fusione.checked);
+    }
+    applica();
+
+    [dim, rot, opa].forEach((c) => c.addEventListener('input', applica));
+    fusione.addEventListener('change', applica);
+
+    // trascinamento con un dito, pinch e rotazione con due
+    const puntatori = new Map();
+    let partenza = null;
+
+    stencil.addEventListener('pointerdown', (e) => {
+      stencil.setPointerCapture(e.pointerId);
+      puntatori.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (puntatori.size === 2) {
+        const [p1, p2] = [...puntatori.values()];
+        partenza = {
+          distanza: Math.hypot(p2.x - p1.x, p2.y - p1.y),
+          angolo: Math.atan2(p2.y - p1.y, p2.x - p1.x),
+          dim: Number(dim.value),
+          rot: Number(rot.value),
+        };
+      }
+    });
+
+    stencil.addEventListener('pointermove', (e) => {
+      if (!puntatori.has(e.pointerId)) return;
+      const prec = puntatori.get(e.pointerId);
+      puntatori.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+      if (puntatori.size === 1) {
+        posa.x += e.clientX - prec.x;
+        posa.y += e.clientY - prec.y;
+        applica();
+      } else if (puntatori.size === 2 && partenza) {
+        const [p1, p2] = [...puntatori.values()];
+        const distanza = Math.hypot(p2.x - p1.x, p2.y - p1.y);
+        const angolo = Math.atan2(p2.y - p1.y, p2.x - p1.x);
+        dim.value = Math.min(115, Math.max(25, partenza.dim * (distanza / partenza.distanza)));
+        rot.value = partenza.rot + ((angolo - partenza.angolo) * 180) / Math.PI;
+        applica();
+      }
+    });
+
+    const rilascia = (e) => {
+      puntatori.delete(e.pointerId);
+      if (puntatori.size < 2) partenza = null;
+    };
+    stencil.addEventListener('pointerup', rilascia);
+    stencil.addEventListener('pointercancel', rilascia);
+
+    // scelta della foto
+    const apriFile = (usaFotocamera) => {
+      if (usaFotocamera) file.setAttribute('capture', 'environment');
+      else file.removeAttribute('capture');
+      file.click();
+    };
+    document.getElementById('scattaFoto').addEventListener('click', () => apriFile(true));
+    document.getElementById('caricaFoto').addEventListener('click', () => apriFile(false));
+
+    file.addEventListener('change', () => {
+      const scelto = file.files && file.files[0];
+      if (!scelto) return;
+      const lettore = new FileReader();
+      lettore.onload = () => {
+        foto.src = lettore.result;
+        foto.hidden = false;
+        pelleFinta.hidden = true;
+      };
+      lettore.readAsDataURL(scelto);
+    });
+
+    // cattura: ricompone foto e disegno su una tela unica
+    document.getElementById('cattura').addEventListener('click', async () => {
+      const riquadro = tela.getBoundingClientRect();
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(riquadro.width * 2);
+      canvas.height = Math.round(riquadro.height * 2);
+      const ctx = canvas.getContext('2d');
+      ctx.scale(2, 2);
+
+      if (!foto.hidden && foto.complete && foto.naturalWidth) {
+        const scala = Math.max(riquadro.width / foto.naturalWidth, riquadro.height / foto.naturalHeight);
+        const w = foto.naturalWidth * scala, h = foto.naturalHeight * scala;
+        ctx.drawImage(foto, (riquadro.width - w) / 2, (riquadro.height - h) / 2, w, h);
+      } else {
+        ctx.drawImage(pelleFinta, 0, 0, riquadro.width, riquadro.height);
+      }
+
+      const sorgente = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(stencil.innerHTML);
+      const immagine = new Image();
+      immagine.src = sorgente;
+      try { await immagine.decode(); } catch (err) { /* il disegno resta senza fusione */ }
+
+      const lato = (Number(dim.value) / 100) * riquadro.width;
+      ctx.save();
+      ctx.globalAlpha = Number(opa.value) / 100;
+      if (fusione.checked) ctx.globalCompositeOperation = 'multiply';
+      ctx.translate(riquadro.width / 2 + posa.x, riquadro.height / 2 + posa.y);
+      ctx.rotate((Number(rot.value) * Math.PI) / 180);
+      ctx.drawImage(immagine, -lato / 2, -lato / 2, lato, lato);
+      ctx.restore();
+
+      stato.prova = { tatuaggioId, immagine: canvas.toDataURL('image/jpeg', 0.86) };
+      vai({ nome: 'prenota', id: tatuaggioId });
+    });
+  }
+
+  disegna();
+})();
+</script>
+</body>
+</html>
